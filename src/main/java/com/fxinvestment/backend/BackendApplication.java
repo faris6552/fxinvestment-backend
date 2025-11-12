@@ -11,7 +11,13 @@ public class BackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
-        System.out.println("=== FxInvestment Backend Started ===");
+        System.out.println("=========================================");
+        System.out.println("🚀 FxInvestment Backend Started Successfully!");
+        System.out.println("📍 Local: http://localhost:8080");
+        System.out.println("📊 API: http://localhost:8080/api/performance");
+        System.out.println("🔧 Health: http://localhost:8080/api/health");
+        System.out.println("📚 Docs: http://localhost:8080/swagger-ui.html");
+        System.out.println("=========================================");
     }
 
     @Bean
@@ -20,7 +26,7 @@ public class BackendApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("*") // Allow all in production
+                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");
             }

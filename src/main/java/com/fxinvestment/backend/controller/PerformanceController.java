@@ -12,51 +12,47 @@ import java.util.Optional;
 @RequestMapping("/api/performance")
 @CrossOrigin(origins = "*")
 public class PerformanceController {
-    
+
     @Autowired
     private PerformanceRepository performanceRepository;
-    
+
     @GetMapping
-    public List<PerformanceRecord> getAllRecords() {
-        return performanceRepository.findAll();
+    public List<PerformanceRecord> getAllPerformanceRecords() {
+        return performanceRepository.findAllOrderByDateTimeDesc();
     }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<PerformanceRecord> getRecordById(@PathVariable Long id) {
-        Optional<PerformanceRecord> record = performanceRepository.findById(id);
-        return record.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-    
+
     @PostMapping
-    public PerformanceRecord createRecord(@RequestBody PerformanceRecord record) {
+    public PerformanceRecord createPerformanceRecord(@RequestBody PerformanceRecord record) {
+        // Ensure datetime is set
+        if (record.getDateTime() == null) {
+            record.setDateTime(java.time.LocalDateTime.now());
+        }
         return performanceRepository.save(record);
     }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<PerformanceRecord> updateRecord(@PathVariable Long id, 
-                                                         @RequestBody PerformanceRecord recordDetails) {
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PerformanceRecord> getPerformanceRecordById(@PathVariable Long id) {
         Optional<PerformanceRecord> record = performanceRepository.findById(id);
-        if (record.isPresent()) {
-            PerformanceRecord existingRecord = record.get();
-            existingRecord.setFxid(recordDetails.getFxid());
-            existingRecord.setWeek(recordDetails.getWeek());
-            existingRecord.setResults(recordDetails.getResults());
-            existingRecord.setDateTime(recordDetails.getDateTime());
-            existingRecord.setComments(recordDetails.getComments());
-            existingRecord.setFilePath(recordDetails.getFilePath());
-            return ResponseEntity.ok(performanceRepository.save(existingRecord));
+        return record.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/fxid/{fxid}")
+    public List<PerformanceRecord> getPerformanceRecordsByFxid(@PathVariable String fxid) {
+        return performanceRepository.findByFxid(fxid);
+    }
+
+    @GetMapping("/week/{week}")
+    public List<PerformanceRecord> getPerformanceRecordsByWeek(@PathVariable Integer week) {
+        return performanceRepository.findByWeek(week);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePerformanceRecord(@PathVariable Long id) {
+        if (performanceRepository.existsById(id)) {
+            performanceRepository.deleteById(id);
+            return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRecord(@PathVariable Long id) {
-        performanceRepository.deleteById(id);
-        return ResponseEntity.ok().build();
-    }
-    
-    @GetMapping("/fxid/{fxid}")
-    public List<PerformanceRecord> getRecordsByFxid(@PathVariable String fxid) {
-        return performanceRepository.findByFxid(fxid);
     }
 }
