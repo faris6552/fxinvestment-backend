@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: fxinvestment-backend
+    runtime: docker
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -Dspring.profiles.active=prod -jar target/fxinvestment-backend-1.0.0.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        value: mysql-51453c-farisshiku-4097.l.aivencloud.com
+      - key: DB_PORT
+        value: 18968
+      - key: DB_NAME
+        value: defaultdb
+      - key: DB_USERNAME
+        value: avnadmin
+      - key: DB_PASSWORD
+        value: AVNS_vdF-cbxC1-CLtU5Iwrf
